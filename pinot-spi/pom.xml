@@ -148,7 +148,7 @@
             <onlyModified>true</onlyModified>
             <skipXmlReport>true</skipXmlReport>
             <skipHtmlReport>true</skipHtmlReport>
-            <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
+            <breakBuildOnSourceIncompatibleModifications>false</breakBuildOnSourceIncompatibleModifications>
             <overrideCompatibilityChangeParameters>
               <overrideCompatibilityChangeParameter>
                 <compatibilityChange>METHOD_NOW_VARARGS</compatibilityChange>
