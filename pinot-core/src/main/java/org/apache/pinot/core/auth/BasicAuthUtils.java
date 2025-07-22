@@ -141,7 +141,7 @@ public final class BasicAuthUtils {
       return Optional.empty();
     }
 
-    // Based on component type, get the user configurations
+    // Based on component type, get the user configurations from the user cache.
     List<UserConfig> userConfigs;
     if (componentType == ComponentType.CONTROLLER) {
       userConfigs = userCache.getAllControllerUserConfig();
@@ -153,25 +153,39 @@ public final class BasicAuthUtils {
       throw new IllegalArgumentException("Unsupported component type: " + componentType);
     }
 
-    // Build a lookup map of <username -> ZkBasicAuthPrincipal>
+    if (userConfigs.isEmpty()) {
+      return Optional.empty();
+    }
+
+    // Build a map of <username -> ZkBasicAuthPrincipal>
+    // This map is used to quickly find the principal by username extracted from the component's user cache.
     Map<String, ZkBasicAuthPrincipal> name2principal = extractBasicAuthPrincipals(userConfigs)
         .stream()
-        .collect(Collectors.toMap(BasicAuthPrincipal::getName, p -> p));
+        .collect(Collectors.toMap(ZkBasicAuthPrincipal::getName, p -> p));
 
     // Build a map of <username -> password>
+    // Here we assume that the auth headers are in the format "Basic <base64(username:password)>"
+    // If the username or password is not valid, it will be filtered out.
     Map<String, String> name2password = authHeaders
         .stream()
-        .collect(
-            Collectors.toMap(org.apache.pinot.common.auth.BasicAuthUtils::extractUsername,
-                org.apache.pinot.common.auth.BasicAuthUtils::extractPassword)
-        );
+        .map(auth -> {
+          String username = org.apache.pinot.common.auth.BasicAuthUtils.extractUsername(auth);
+          String password = org.apache.pinot.common.auth.BasicAuthUtils.extractPassword(auth);
+          return username != null && password != null ? Map.entry(username, password) : null;
+        })
+        .filter(Objects::nonNull)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-    // Convert <password -> principal>, then verify each password with Bcrypt.
+    // We create a map of <password -> ZkBasicAuthPrincipal> to check if the password matches the principal's password.
     Map<String, ZkBasicAuthPrincipal> password2principal = name2password
         .keySet()
         .stream()
         .collect(Collectors.toMap(name2password::get, name2principal::get));
 
+    // Check if the password matches the principal's password using Bcrypt.
+    // We use BcryptUtils.checkpwWithCache to verify the password against the cached user password.
+    // If cache is not available, it will compute the password hash and store it in the cache.
+    // If it matches, return the principal. If no match is found, return an empty Optional.
     return password2principal
         .entrySet()
         .stream()

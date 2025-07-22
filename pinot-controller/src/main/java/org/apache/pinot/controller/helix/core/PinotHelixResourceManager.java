@@ -1695,10 +1695,10 @@ public class PinotHelixResourceManager {
       addUser(new UserConfig(initUsername, initPassword, ComponentType.CONTROLLER.name(), RoleType.ADMIN.name(),
           null, null, null));
       addUser(
-          new UserConfig(initUsername, initPassword, ComponentType.BROKER.name(), RoleType.ADMIN.name(),
+          new UserConfig("admin", "verysecret", ComponentType.BROKER.name(), RoleType.ADMIN.name(),
               null, null, null));
       addUser(
-          new UserConfig(initUsername, initPassword, ComponentType.SERVER.name(), RoleType.ADMIN.name(),
+          new UserConfig("admin", "verysecret", ComponentType.SERVER.name(), RoleType.ADMIN.name(),
               null, null, null));
     }
   }
