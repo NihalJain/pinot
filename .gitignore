@@ -61,3 +61,7 @@ kubernetes/helm/**/Chart.lock
 
 pinot-integration-tests/src/test/resources/udf-test-results/*.md
 !/pinot-integration-tests/src/test/resources/udf-test-results/README.md
+apache-pinot-1.5.0-*
+apache-pinot-1.4.0-*
+test/conf/*
+test/logs/*
