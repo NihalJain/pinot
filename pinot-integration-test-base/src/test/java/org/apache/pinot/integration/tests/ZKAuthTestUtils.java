@@ -23,22 +23,22 @@ import org.apache.pinot.spi.env.PinotConfiguration;
 
 
 /**
- * Utility class for configuring basic authentication for Pinot components.
- * This class provides methods to add basic authentication configurations for the controller, broker, server, and
+ * Utility class for configuring ZK-based basic authentication for Pinot components.
+ * This class provides methods to add ZK basic authentication configurations for the controller, broker, server, and
  * minion.
  * It extends the {@link AbstractAuthTestUtils} class to leverage common authentication configuration methods.
  */
-public final class BasicAuthTestUtils extends AbstractAuthTestUtils {
-  private BasicAuthTestUtils() {
+public final class ZKAuthTestUtils extends AbstractAuthTestUtils {
+  private ZKAuthTestUtils() {
   }
 
   public static void addControllerConfiguration(Map<String, Object> properties) {
     addCommonControllerConfiguration(properties,
-        "org.apache.pinot.controller.api.access.BasicAuthAccessControlFactory");
+        "org.apache.pinot.controller.api.access.ZkBasicAuthAccessControlFactory");
   }
 
   public static void addBrokerConfiguration(PinotConfiguration brokerConf) {
-    addCommonBrokerConfiguration(brokerConf, "org.apache.pinot.broker.broker.BasicAuthAccessControlFactory");
+    addCommonBrokerConfiguration(brokerConf, "org.apache.pinot.broker.broker.ZkBasicAuthAccessControlFactory");
   }
 
   public static void addServerConfiguration(PinotConfiguration serverConf) {
