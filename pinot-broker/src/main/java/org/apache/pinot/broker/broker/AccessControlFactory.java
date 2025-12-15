@@ -18,15 +18,9 @@
  */
 package org.apache.pinot.broker.broker;
 
-import com.google.common.base.Preconditions;
-import java.util.Collection;
-import java.util.List;
 import org.apache.helix.store.zk.ZkHelixPropertyStore;
 import org.apache.helix.zookeeper.datamodel.ZNRecord;
 import org.apache.pinot.broker.api.AccessControl;
-import org.apache.pinot.broker.api.HttpRequesterIdentity;
-import org.apache.pinot.broker.grpc.GrpcRequesterIdentity;
-import org.apache.pinot.spi.auth.broker.RequesterIdentity;
 import org.apache.pinot.spi.env.PinotConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +36,7 @@ public abstract class AccessControlFactory {
 
   /**
    * Extend original init method inorder to support Zookeeper BasicAuthAccessControlFactory
-   * Because ZKBasicAuthAccessControlFactory need to acquire users info from HelixPropertyStore
+   * Because ZKBasicAuthAccessControlFactory need to acquire users info from ZkHelixPropertyStore
    *
    * @param configuration pinot configuration
    * @param propertyStore Helix PropertyStore
@@ -53,6 +47,9 @@ public abstract class AccessControlFactory {
 
   public abstract AccessControl create();
 
+  /**
+   * Utility to load the desired AccessControlFactory, either from config or defaulting to AllowAllAccessControlFactory.
+   */
   public static AccessControlFactory loadFactory(PinotConfiguration configuration,
       ZkHelixPropertyStore<ZNRecord> propertyStore) {
     AccessControlFactory accessControlFactory;
@@ -69,27 +66,5 @@ public abstract class AccessControlFactory {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public static Collection<String> extractAuthorizationTokens(RequesterIdentity requesterIdentity) {
-    Preconditions.checkArgument(requesterIdentity instanceof HttpRequesterIdentity
-            || requesterIdentity instanceof GrpcRequesterIdentity,
-        "HttpRequesterIdentity or GrpcRequesterIdentity required");
-
-    if (requesterIdentity instanceof HttpRequesterIdentity) {
-      HttpRequesterIdentity identity = (HttpRequesterIdentity) requesterIdentity;
-      return identity.getHttpHeaders().get(HEADER_AUTHORIZATION);
-    }
-
-    if (requesterIdentity instanceof GrpcRequesterIdentity) {
-      GrpcRequesterIdentity identity = (GrpcRequesterIdentity) requesterIdentity;
-      for (String key : identity.getMetadata().keySet()) {
-        if (HEADER_AUTHORIZATION.equalsIgnoreCase(key)) {
-          return identity.getMetadata().get(key);
-        }
-      }
-    }
-
-    return List.of();
   }
 }

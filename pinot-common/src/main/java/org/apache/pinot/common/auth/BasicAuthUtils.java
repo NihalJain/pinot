@@ -70,6 +70,43 @@ public final class BasicAuthUtils {
     return StringUtils.split(decodedString, ":")[1];
   }
 
+//  public static String decodeBasicAuthToken(String auth) {
+//    if (StringUtils.isBlank(auth)) {
+//      return null;
+//    }
+//    String replacedAuth = StringUtils.replace(auth, "Basic ", "");
+//    try {
+//      // Base64 decoding can throw an IllegalArgumentException if the input is not valid base64
+//      return decodeBase64AuthToken(replacedAuth);
+//    } catch (IllegalArgumentException e) {
+//      return null; // Return null if decoding fails
+//    }
+//  }
+//
+//  private static String decodeBase64AuthToken(String replacedAuth) {
+//    byte[] decodedBytes = Base64.getDecoder().decode(replacedAuth);
+//    String decodedString = new String(decodedBytes);
+//    return decodedString;
+//  }
+//
+//  public static String extractUsername(String auth) {
+//    String decodedString = decodeBasicAuthToken(auth);
+//    if (decodedString == null) {
+//      return null;
+//    }
+//    String[] parts = StringUtils.split(decodedString, ":");
+//    return (parts != null && parts.length >= 1) ? parts[0] : null;
+//  }
+//
+//  public static String extractPassword(String auth) {
+//    String decodedString = decodeBasicAuthToken(auth);
+//    if (decodedString == null) {
+//      return null;
+//    }
+//    String[] parts = StringUtils.split(decodedString, ":");
+//    return (parts != null && parts.length >= 2) ? parts[1] : null;
+//  }
+
   /**
    * Convert http header-compliant base64 encoded token to password-encrypted base64 token
    *
