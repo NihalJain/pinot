@@ -158,7 +158,7 @@
     <avro.version>1.12.1</avro.version>
     <parquet.version>1.17.1</parquet.version>
     <orc.version>1.9.8</orc.version>
-    <hive.version>2.8.1</hive.version>
+    <hive.version>4.2.0</hive.version>
     <helix.version>2.0.0</helix.version>
     <zkclient.version>0.11</zkclient.version>
     <jackson.version>2.22.0</jackson.version>
